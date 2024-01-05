@@ -1,0 +1,109 @@
+@page
+@using Domain
+@model Index
+
+<h1>Play</h1>
+
+<h5>Reload page in <span id="reload-label">-</span></h5>
+
+<h4>You are player: @Model.Engine.State.Players.IndexOf(Model.Engine.State.Players.First(p => p.Id == Model.PlayerId)) - @Model.Engine.State.Players.First(p => p.Id == Model.PlayerId).Nickname</h4>
+<h4>Active player: @Model.Engine.State.SelectedPlayerIndex - @Model.Engine.GetActivePlayer().Nickname</h4>
+
+@if (Model.Engine.State.PlayDeck.Count > 2)
+{
+    <div style="border: 3px solid @Model.Engine.State.PlayDeck[^3].Color.ToString().ToLower()">
+        <h6 style="margin-bottom: 5px">Third from top card: @Model.Engine.State.PlayDeck[^3]</h6>
+    </div>
+}
+
+@if (Model.Engine.State.PlayDeck.Count > 1)
+{
+    <div style="border: 3px solid @Model.Engine.State.PlayDeck[^2].Color.ToString().ToLower()">
+        <h5 style="margin-bottom: 5px">Second from top card: @Model.Engine.State.PlayDeck[^2]</h5>
+    </div>
+}
+
+<div style="border: 3px solid @Model.Engine.State.PlayDeck.Last().Color.ToString().ToLower()">
+    <h4 style="margin-bottom: 5px">Top card: @Model.Engine.State.PlayDeck.Last()</h4>
+</div>
+
+@if (Model.AskForColor)
+{
+    <table>
+        <tr>
+            @foreach (var color in Enum.GetValues<EUnoCards.UnoCardsColors>())
+                {
+                    <td style="margin: 15px">
+                        <div>
+                            <form method="post">
+                                <div class="form-group">
+                                    @{
+                                        var c = (int)color - 6;
+                                    }
+                                    <input type="hidden" class="form-control" name="card" value="@c"/>
+                                    <input type="submit" value="@color" class="btn btn-primary">
+                                </div>
+                            </form>
+                        </div>
+                    </td>
+                }
+        </tr>
+    </table>
+}
+else
+{
+    <h4>Cards</h4>
+    <table>
+        <tr>
+            @{
+                var player = Model.Engine.State.Players.First(p => p.Id == Model.PlayerId);
+            }
+            @foreach (var card in player.CardsHand)
+            {
+                <td style="margin: 15px">
+                    <div>
+                        <form method="post">
+                            <div class="form-group">
+                                <input type="hidden" class="form-control" name="card" value="@player.CardsHand.IndexOf(card)"/>
+                                <input type="submit" value="@card" class="btn btn-primary">
+                            </div>
+                        </form>
+                    </div>
+                </td>
+            }
+        </tr>
+    </table>
+}
+
+@if (Model.Engine.GetActivePlayer().Id == Model.PlayerId && Model.Engine.GetActivePlayer().Drew)
+{
+    <h5>You drew a card</h5>
+    <form method="post">
+        <div class="form-group">
+            <input type="hidden" class="form-control" name="card" value="-1"/>
+            <input type="submit" value="Skip turn" class="btn btn-primary">
+        </div>
+    </form>
+}
+
+
+
+@section Scripts
+{
+    @if (Model.Engine.GetActivePlayer().Id != Model.PlayerId && !Model.AskForColor)
+    {
+        <script>
+            let timerLabel = document.querySelector("#reload-label")
+            let timerValue = 3
+            timerLabel.innerHTML = timerValue.toString();
+            
+            setInterval(() => {
+                timerValue--;
+                timerLabel.innerHTML = timerValue.toString();
+                if (timerValue <= 0){
+                    window.location.reload();
+                }
+            }, 1000)
+        </script>
+    }
+}

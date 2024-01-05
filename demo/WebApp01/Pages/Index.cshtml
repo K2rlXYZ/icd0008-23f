@@ -1,0 +1,105 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+@section Scripts
+{
+    <script type="text/javascript">
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+        function botRandomPick(){
+            let pick = Math.floor(Math.random() * 3);
+            switch (pick){
+                case 0:
+                    return "rock";
+                case 1:
+                    return "paper";   
+                case 2:
+                    return "scissors";
+                default:
+                    return "ERR";
+            }
+        }
+        function getHumanPick(){
+            let ele = document.getElementsByName('choice');
+            for (i = 0; i < ele.length; i++) {
+                if (ele[i].checked)
+                    return ele[i].value
+            }
+        }
+        function convertPickToNumber(pick){
+            switch (pick){
+                case "rock":
+                    return 0
+                case "paper":
+                    return 1;
+                case "scissors":
+                    return 2;
+                default:
+                    return "ERR";
+            }
+        }
+        function calcWinner(botPick, humanPick){
+            botPick = convertPickToNumber(botPick);
+            humanPick = convertPickToNumber(humanPick);
+            if ((botPick === 2 && humanPick === 0)){
+                return "human";
+            } else if ((botPick === 0 && humanPick === 2)) {
+                return "bot";
+            } else if (humanPick > botPick){
+                return "human";
+            } else if (botPick > humanPick) {
+                return "bot";
+            } else if (humanPick === botPick){
+                return "draw";
+            }
+        }
+        function game(){
+            let botPick = botRandomPick();
+            let humanPick = getHumanPick();
+            let winner = calcWinner(botPick, humanPick);
+            document.getElementById("botPickParagraph").innerHTML = "<strong>Bot picked:</strong> " + capitalizeFirstLetter(botPick);
+            document.getElementById("humanPickParagraph").innerHTML = "<strong>Human picked:</strong> " + capitalizeFirstLetter(humanPick);
+            document.getElementById("winnerParagraph").innerHTML = "<strong>Winner:</strong> " + capitalizeFirstLetter(winner);
+        }
+    </script>
+}
+
+<div>
+    <strong>Pick:</strong> <br>
+    <input type="radio" id="rockRadio" name="choice" value="rock">
+    <label for="rockRadio">Rock</label><br>
+    <input type="radio" id="paperRadio" name="choice" value="paper">
+    <label for="paperRadio">Paper</label><br>
+    <input type="radio" id="scissorsRadio" name="choice" value="scissors">
+    <label for="scissorsRadio">Scissors</label>
+</div>
+
+<button id="button1" type="button" onclick="game();">Play game.</button>
+
+<br><br><br>
+
+<div>
+    <p id="botPickParagraph">
+        <strong>
+            Bot picked:
+        </strong>
+    </p>
+    
+    <p id="humanPickParagraph">
+        <strong>
+            Human picked:
+        </strong>
+    </p>
+    
+    <br>
+    
+    <p id="winnerParagraph">
+        <strong>
+            Winner:
+        </strong>
+    </p>
+</div>

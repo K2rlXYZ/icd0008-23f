@@ -1,0 +1,37 @@
+@page
+@using Domain
+@model WebApp.Pages.Game.ConfigureNicknames
+
+<h2>Configure nicknames for players</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label>Play as</label>
+        <select asp-for="PlayAsPlayerIndex">
+            @for (int i = 0; i < Model.Engine.State.Players.Count; i++)
+            {
+                if (Model.Engine.State.Players[i].Type == EPlayerType.Human)
+                {
+                    <option value="@i">@Model.Engine.State.Players[i].Nickname</option>
+                }
+            }
+        </select>
+    </div>
+    <table>
+        @for (int i = 0; i < Model.Engine.State.Players.Count; i++)
+        {
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <label asp-for="@Model.Engine.State.Players[i].Nickname" class="control-label"></label>
+                        <input asp-for="@Model.Nicknames[i]" class="form-control" value="@Model.Engine.State.Players[i].Nickname"/>
+                        <span asp-validation-for="@Model.Nicknames[i]" class="text-danger"></span>
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+    <div class="form-group">
+        <input type="submit" value="Create game" class="btn btn-primary" />
+    </div>
+</form>

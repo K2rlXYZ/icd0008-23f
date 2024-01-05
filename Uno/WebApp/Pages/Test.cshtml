@@ -1,0 +1,20 @@
+@page
+@model WebApp.Pages.Test
+
+OK
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <td>Game id</td>
+        <td>State</td>
+    </tr>
+    </thead>
+    @foreach (var game in Model.Games)
+    {
+        <tr>
+            <td>@game.Id</td>
+            <td>@game.State</td>
+        </tr>
+    }
+</table>
